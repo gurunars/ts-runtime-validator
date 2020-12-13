@@ -6,11 +6,11 @@ export interface FieldDecorator {
   innerField: Field<unknown, unknown>
 }
 
-export interface Field<DeserializedType, Params=Json> {
+export interface Field<DeserializedType, Spec=Json> {
   type: symbol;
   validate(value: any): DeserializedType;
   serialize(deserialized: DeserializedType): Json
-  getParams: () => Params
+  spec: Spec
 }
 
 export type ValidatorSpec<DeserializedType extends Any> = {
@@ -51,7 +51,7 @@ export const withErrorDecoration = <R> (key: any, call: () => R): R => {
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const isField = <DeserializedType extends Any>(object: any): object is Field<DeserializedType> =>
-  'validate' in object && 'serialize' in object && 'getParams' in object
+  'validate' in object && 'serialize' in object && 'spec' in object
 
 const mapSpec = <DeserializedType extends Any, TSpec extends SpecUnion<DeserializedType>, R> (
   validatorSpec: TSpec,
@@ -76,7 +76,7 @@ const mapSpec = <DeserializedType extends Any, TSpec extends SpecUnion<Deseriali
 }
 
 export const getParams = <TSpec extends SpecUnion<Any>> (validatorSpec: TSpec): Json =>
-  mapSpec(validatorSpec, validator => validator.getParams())
+  mapSpec(validatorSpec, validator => validator.spec)
 
 const ensureNoExtraFields = <DeserializedType extends Any, TSpec extends SpecUnion<DeserializedType>> (
   validatorSpec: TSpec,

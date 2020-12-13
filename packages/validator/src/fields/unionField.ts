@@ -35,9 +35,9 @@ class UnionField<
     }
     throw 'Invalid variant - should have matched'
   }
-  getParams() {
+  get spec() {
     return {
-      innerSpecs: this.variants.map(it => it.getParams()),
+      innerSpecs: this.variants.map(it => it.spec),
     }
   }
 

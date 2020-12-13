@@ -32,7 +32,7 @@ class StringField implements Field<string>, WithStringInputSupport, WithRegExp {
   serialize(deserialized: string): Json {
     return deserialized
   }
-  getParams() {
+  get spec() {
     return {
       regex: this.regexV?.source,
     }

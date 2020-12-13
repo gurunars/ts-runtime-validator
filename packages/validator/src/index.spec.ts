@@ -10,7 +10,7 @@ class SampleField implements Field<'sample'> {
   serialize(_: 'sample'): Json {
     return 'sample'
   }
-  getParams() {
+  get spec() {
     return {}
   }
 }

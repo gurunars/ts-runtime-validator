@@ -20,9 +20,9 @@ class ArrayField<T> implements Field<T[]> {
       (it, index) => withErrorDecoration(index, () => this.itemField.serialize(it) as unknown as Json)
     )
   }
-  getParams(): Json {
+  get spec(): Json {
     return {
-      itemSpec: this.itemField.getParams(),
+      itemSpec: this.itemField.spec,
     }
   }
 }

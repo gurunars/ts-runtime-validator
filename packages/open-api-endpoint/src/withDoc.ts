@@ -24,14 +24,14 @@ class WithDoc<T extends Any> implements Field<T>, FieldDecorator {
   serialize(deserialized: T): Json {
     return this.innerField.serialize(deserialized)
   }
-  getParams() {
+  get spec() {
     return merge({
       description: this.doc.description,
       examples: this.doc.examples && mapValues(this.doc.examples, (src) => ({
         ...src,
         value: this.serialize(src.value)
       }))
-    }, this.innerField.getParams())
+    }, this.innerField.spec)
   }
 }
 

@@ -23,7 +23,7 @@ class ObjectField<DeserializedType extends Record<string, Any>> implements Field
   serialize(deserialized: DeserializedType): Json {
     return serialize(this.objectSpec, deserialized as any)
   }
-  getParams() {
+  get spec() {
     return {
       spec: getParams(this.objectSpec),
     }

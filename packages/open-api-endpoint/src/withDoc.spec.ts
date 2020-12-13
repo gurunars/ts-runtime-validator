@@ -20,7 +20,7 @@ describe('field', () => {
   })
 
   it('should annotate params with a description', () => {
-    expect(field.getParams()).toEqual({'description': 'Some description',
+    expect(field.spec).toEqual({'description': 'Some description',
       'examples': {
         'zero': {
           'summary': 'Sample value',

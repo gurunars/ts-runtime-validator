@@ -18,10 +18,10 @@ class OptionalValueDecorator<T extends Any> implements Field<Optional<T>>, Field
   serialize(deserialized: Optional<T>): Json {
     return deserialized === undefined ? deserialized : this.innerField.serialize(deserialized) as any
   }
-  getParams() {
+  get spec() {
     return merge(
       { isOptional: true },
-      this.innerField.getParams()
+      this.innerField.spec
     )
   }
 

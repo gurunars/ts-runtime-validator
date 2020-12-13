@@ -30,7 +30,7 @@ class NumberField implements Field<number>, WithStringInputSupport {
   serialize(deserialized: number): Json {
     return deserialized
   }
-  getParams() {
+  get spec() {
     return {
       ...this.params,
     }

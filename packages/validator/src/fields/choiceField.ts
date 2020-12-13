@@ -33,7 +33,7 @@ class ChoiceField<
   serialize(deserialized: Choice): Json {
     return deserialized as unknown as Primitive
   }
-  getParams() {
+  get spec() {
     return this.params
   }
 

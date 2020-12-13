@@ -18,10 +18,10 @@ class WithDefault<T extends Any> implements Field<T>, FieldDecorator {
   serialize(deserialized: T): Json {
     return this.innerField.serialize(deserialized)
   }
-  getParams() {
+  get spec() {
     return merge({
       defaultValue: this.defaultValue,
-    }, this.innerField.getParams())
+    }, this.innerField.spec)
   }
 }
 

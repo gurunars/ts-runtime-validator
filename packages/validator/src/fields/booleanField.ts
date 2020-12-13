@@ -20,7 +20,7 @@ class BooleanField implements Field<boolean>, WithStringInputSupport {
   serialize(deserialized: boolean): Json {
     return deserialized
   }
-  getParams() {
+  get spec() {
     return {
     }
   }
