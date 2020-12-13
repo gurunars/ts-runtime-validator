@@ -3,37 +3,32 @@ import { Json } from '../Json'
 import { Any } from '../util-types'
 import { WithRegExp, WithStringInputSupport } from '../WithStringInputSupport'
 
-type Params = {
-  canBeFloat?: boolean
+type Spec = {
+  canBeFloat: boolean
 }
 
 const FieldSymbol = Symbol('@validator/fields.NumberField')
 
-class NumberField implements Field<number>, WithStringInputSupport {
-  constructor(protected readonly params?: Params) {}
+class NumberField implements Field<number, Spec>, WithStringInputSupport {
+  constructor(readonly spec: Spec) {}
 
   type = FieldSymbol
 
   getFieldWithRegExp(): Field<Any> & WithRegExp {
-    return new NumberFieldWithRegExp(this.params)
+    return new NumberFieldWithRegExp(this.spec)
   }
 
   validate(value: any): number {
     if (typeof value !== 'number') {
       throw 'Not a number'
     }
-    if (!this.params?.canBeFloat && value !== Math.floor(value)) {
+    if (!this.spec.canBeFloat && value !== Math.floor(value)) {
       throw 'Not an int'
     }
     return value
   }
   serialize(deserialized: number): Json {
     return deserialized
-  }
-  get spec() {
-    return {
-      ...this.params,
-    }
   }
 }
 
@@ -43,7 +38,7 @@ class NumberFieldWithRegExp extends NumberField implements WithRegExp {
     const parts: string[] = []
     parts.push('-?')
     parts.push('\\d+')
-    if (this.params?.canBeFloat) {
+    if (this.spec.canBeFloat) {
       parts.push('(\\.\\d+)?')
     }
 
@@ -56,7 +51,7 @@ class NumberFieldWithRegExp extends NumberField implements WithRegExp {
 
 }
 
-const numberField = (params?: Params): NumberField => new NumberField(params)
+const numberField = (spec: Spec = {canBeFloat: true}): NumberField => new NumberField(spec)
 
 numberField.type = FieldSymbol
 

@@ -21,8 +21,7 @@ class BooleanField implements Field<boolean>, WithStringInputSupport {
     return deserialized
   }
   get spec() {
-    return {
-    }
+    return {}
   }
 }
 

@@ -4,7 +4,7 @@ import { escapeRegex } from '../utils'
 import { Primitive, Json } from '../Json'
 import { Any } from '../util-types'
 
-type Params<Choices> = {
+type Spec<Choices> = {
   readonly choices: Choices
 }
 
@@ -12,16 +12,16 @@ const FieldSymbol = Symbol('@validator/fields.ChoiceField')
 
 class ChoiceField<
   Choice extends Primitive,
-> implements Field<Choice>, WithStringInputSupport {
+> implements Field<Choice, Spec<Choice[]>>, WithStringInputSupport {
   private choicesSet: Set<Primitive>
 
   type = FieldSymbol
 
-  constructor(readonly params: Params<readonly Choice[]>) {
-    this.choicesSet = new Set(params.choices)
+  constructor(readonly choices: Choice[]) {
+    this.choicesSet = new Set(choices)
   }
   getFieldWithRegExp(): Field<Any> & WithRegExp {
-    return new ChoiceFieldWithRegExp(this.params)
+    return new ChoiceFieldWithRegExp(this.choices)
   }
 
   validate(value: any): Choice {
@@ -34,7 +34,9 @@ class ChoiceField<
     return deserialized as unknown as Primitive
   }
   get spec() {
-    return this.params
+    return {
+      choices: this.choices
+    }
   }
 
 }
@@ -45,18 +47,18 @@ class ChoiceFieldWithRegExp<
 
   private fullChoiceMap: Map<any, Primitive>
 
-  constructor(readonly params: Params<readonly Choice[]>) {
-    super(params)
+  constructor(readonly choices: Choice[]) {
+    super(choices)
     this.fullChoiceMap = new Map<any, Primitive>()
 
-    params.choices.forEach(it => {
+    choices.forEach(it => {
       this.fullChoiceMap.set(it, it)
       this.fullChoiceMap.set(it.toString(), it)
     })
   }
 
   get regex() {
-    return new RegExp(Object.keys(this.params.choices)
+    return new RegExp(Object.keys(this.choices)
       .map(it => it.toString())
       .map(escapeRegex)
       .join('|')
@@ -71,10 +73,8 @@ class ChoiceFieldWithRegExp<
 
 const choiceField = <
   Choice extends Primitive,
-> (...choices: readonly Choice[]): ChoiceField<Choice> =>
-    new ChoiceField({
-      choices,
-    })
+> (...choices: Choice[]): ChoiceField<Choice> =>
+    new ChoiceField(choices)
 
 choiceField.type = FieldSymbol
 

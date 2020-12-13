@@ -3,8 +3,12 @@ import { Json } from '../Json'
 
 const FieldSymbol = Symbol('@validator/fields.ArrayField')
 
-class ArrayField<T> implements Field<T[]> {
-  constructor(private readonly itemField: Field<T>) {}
+type ArraySpec<ItemSpec> = {
+  readonly itemSpec: ItemSpec
+}
+
+class ArrayField<T, ItemSpec> implements Field<T[], ArraySpec<ItemSpec>> {
+  constructor(private readonly itemField: Field<T, ItemSpec>) {}
   type = FieldSymbol
 
   validate(value: any): T[] {
@@ -20,16 +24,16 @@ class ArrayField<T> implements Field<T[]> {
       (it, index) => withErrorDecoration(index, () => this.itemField.serialize(it) as unknown as Json)
     )
   }
-  get spec(): Json {
+  get spec(): ArraySpec<ItemSpec> {
     return {
       itemSpec: this.itemField.spec,
     }
   }
 }
 
-const arrayField = <T> (
-  itemField: Field<T>,
-): ArrayField<T> =>
+const arrayField = <T, ItemSpec> (
+  itemField: Field<T, ItemSpec>,
+): ArrayField<T, ItemSpec> =>
     new ArrayField(itemField)
 
 arrayField.type = FieldSymbol
