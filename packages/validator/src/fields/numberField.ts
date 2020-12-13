@@ -51,7 +51,7 @@ class NumberFieldWithRegExp extends NumberField implements WithRegExp {
 
 }
 
-const numberField = (spec: Spec = {canBeFloat: true}): NumberField => new NumberField(spec)
+const numberField = (spec: Spec = {canBeFloat: false}): NumberField => new NumberField(spec)
 
 numberField.type = FieldSymbol
 

@@ -45,9 +45,9 @@ test('nested getParams', () => {
       },
     },
     'innerSchema': {
-      'description': undefined,
       'spec': {
         'num': {
+          'canBeFloat': false,
           'defaultValue': 42,
         },
         'str': {

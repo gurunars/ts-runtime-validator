@@ -30,7 +30,9 @@ test('serialize', () => {
 
 test('getParams', () => {
   expect(getParams(field)).toEqual({
-    itemSpec: {},
+    itemSpec: {
+      canBeFloat: false
+    },
   })
 })
 

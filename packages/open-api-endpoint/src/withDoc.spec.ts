@@ -20,11 +20,13 @@ describe('field', () => {
   })
 
   it('should annotate params with a description', () => {
-    expect(field.spec).toEqual({'description': 'Some description',
-      'examples': {
-        'zero': {
-          'summary': 'Sample value',
-          'value': 14,
+    expect(field.spec).toEqual({
+      description: 'Some description',
+      canBeFloat: false,
+      examples: {
+        zero: {
+          summary: 'Sample value',
+          value: 14,
         },
       },
     })
