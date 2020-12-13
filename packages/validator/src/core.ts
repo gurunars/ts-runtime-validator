@@ -3,14 +3,14 @@ import { Segment } from './segmentChain'
 import { Any } from './util-types'
 
 export interface FieldDecorator {
-  innerField: Field<unknown>
+  innerField: Field<unknown, unknown>
 }
 
-export interface Field<DeserializedType> {
+export interface Field<DeserializedType, Params=Json> {
   type: symbol;
   validate(value: any): DeserializedType;
   serialize(deserialized: DeserializedType): Json
-  getParams: () => Json
+  getParams: () => Params
 }
 
 export type ValidatorSpec<DeserializedType extends Any> = {

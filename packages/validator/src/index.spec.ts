@@ -3,6 +3,7 @@ import { Field, validate, TypeHint, Json, serialize, getParams, $ } from '.'
 import { expectType } from './TypeTestUtils.test'
 
 class SampleField implements Field<'sample'> {
+  type = Symbol('SampleField')
   validate(_: any): 'sample' {
     return 'sample'
   }
