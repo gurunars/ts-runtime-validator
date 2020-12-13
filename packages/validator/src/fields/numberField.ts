@@ -39,7 +39,7 @@ class NumberField implements Field<number>, WithStringInputSupport {
 
 class NumberFieldWithRegExp extends NumberField implements WithRegExp {
 
-  regex() {
+  get regex() {
     const parts: string[] = []
     parts.push('-?')
     parts.push('\\d+')

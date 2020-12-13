@@ -55,7 +55,7 @@ class ChoiceFieldWithRegExp<
     })
   }
 
-  regex() {
+  get regex() {
     return new RegExp(Object.keys(this.params.choices)
       .map(it => it.toString())
       .map(escapeRegex)
