@@ -30,6 +30,16 @@ export type TypeHint<Spec extends SpecUnion<Any> | undefined> =
   :
     undefined;
 
+export type SpecHint<Spec extends SpecUnion<Any> | undefined> =
+  Spec extends Segment<Any> ?
+    Spec['spec']
+  : Spec extends ValidatorSpec<Record<string, Any>> ?
+    { [P in keyof Spec]: Spec[P]['spec']; }
+  : Spec extends Field<Any, Any> ?
+    Spec['spec']
+  :
+    undefined;
+
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const withErrorDecoration = <R> (key: any, call: () => R): R => {
   try {
@@ -75,7 +85,7 @@ const mapSpec = <DeserializedType extends Any, TSpec extends SpecUnion<Deseriali
   }
 }
 
-export const getParams = <TSpec extends SpecUnion<Any>> (validatorSpec: TSpec): Json =>
+export const getParams = <TSpec extends SpecUnion<Any>> (validatorSpec: TSpec): SpecHint<TSpec> =>
   mapSpec(validatorSpec, validator => validator.spec)
 
 const ensureNoExtraFields = <DeserializedType extends Any, TSpec extends SpecUnion<DeserializedType>> (
