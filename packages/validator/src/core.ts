@@ -13,11 +13,13 @@ export interface Field<DeserializedType, Spec=Json> {
   spec: Spec
 }
 
-export type ValidatorSpec<DeserializedType extends Any, SpecType extends { [P in keyof DeserializedType]: Any }> = {
+type AnyOf<DeserializedType extends Any> = { [P in keyof DeserializedType]: Any }
+
+export type ValidatorSpec<DeserializedType extends Any, SpecType extends AnyOf<DeserializedType>> = {
   [P in keyof DeserializedType]: Field<DeserializedType[P], SpecType[P]>;
 };
 
-export type SpecUnion<DeserializedType extends Any, SpecType extends { [P in keyof DeserializedType]: Any }> =
+export type SpecUnion<DeserializedType extends Any, SpecType extends AnyOf<DeserializedType>> =
   Segment<Any> | ValidatorSpec<DeserializedType, SpecType> | Field<DeserializedType, SpecType> | undefined;
 
 export type TypeHint<Spec extends SpecUnion<Any, Any> | undefined> =
@@ -65,7 +67,7 @@ export const isField = <DeserializedType extends Any>(object: any): object is Fi
 
 const mapSpec = <
   DeserializedType extends Any,
-  SpecType extends { [P in keyof DeserializedType]: Any },
+  SpecType extends AnyOf<DeserializedType>,
   TSpec extends SpecUnion<DeserializedType, SpecType>,
   R
 > (
