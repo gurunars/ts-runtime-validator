@@ -58,6 +58,8 @@ describe('type', () => {
     type Seg = typeof path
     expectType<Seg, Segment<{
       key: number
+    }, {
+      key: any;
     }>>(true)
   })
 })

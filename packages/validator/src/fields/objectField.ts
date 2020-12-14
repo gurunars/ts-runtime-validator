@@ -10,8 +10,11 @@ import { Any } from '../util-types'
 
 const FieldSymbol = Symbol('@validator/fields.ObjectField')
 
-class ObjectField<DeserializedType extends Record<string, Any>> implements Field<DeserializedType> {
-  constructor(readonly objectSpec: ValidatorSpec<DeserializedType>) {}
+class ObjectField<
+  DeserializedType extends Record<string, Any>,
+  SpecType extends { [P in keyof DeserializedType]: Any }
+> implements Field<DeserializedType> {
+  constructor(readonly objectSpec: ValidatorSpec<DeserializedType, SpecType>) {}
   type = FieldSymbol
 
   validate(value: any): DeserializedType {
@@ -31,9 +34,12 @@ class ObjectField<DeserializedType extends Record<string, Any>> implements Field
 
 }
 
-const objectField = <DeserializedType extends Record<string, Any>> (
-  objectSpec: ValidatorSpec<DeserializedType>,
-): ObjectField<DeserializedType> => new ObjectField(objectSpec)
+const objectField = <
+  DeserializedType extends Record<string, Any>,
+  SpecType extends { [P in keyof DeserializedType]: Any }
+> (
+    objectSpec: ValidatorSpec<DeserializedType, SpecType>,
+  ): ObjectField<DeserializedType, SpecType> => new ObjectField(objectSpec)
 
 objectField.type = FieldSymbol
 

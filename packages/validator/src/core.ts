@@ -13,27 +13,27 @@ export interface Field<DeserializedType, Spec=Json> {
   spec: Spec
 }
 
-export type ValidatorSpec<DeserializedType extends Any,> = {
-  [P in keyof DeserializedType]: Field<DeserializedType[P]>;
+export type ValidatorSpec<DeserializedType extends Any, SpecType extends { [P in keyof DeserializedType]: Any }> = {
+  [P in keyof DeserializedType]: Field<DeserializedType[P], SpecType[P]>;
 };
 
-export type SpecUnion<DeserializedType extends Any> =
-  Segment<Any> | ValidatorSpec<DeserializedType> | Field<DeserializedType> | undefined;
+export type SpecUnion<DeserializedType extends Any, SpecType extends { [P in keyof DeserializedType]: Any }> =
+  Segment<Any> | ValidatorSpec<DeserializedType, SpecType> | Field<DeserializedType, SpecType> | undefined;
 
-export type TypeHint<Spec extends SpecUnion<Any> | undefined> =
-  Spec extends Segment<Any> ?
+export type TypeHint<Spec extends SpecUnion<Any, Any> | undefined> =
+  Spec extends Segment<Any, Any> ?
     ReturnType<Spec['validate']>
-  : Spec extends ValidatorSpec<Record<string, Any>> ?
+  : Spec extends ValidatorSpec<Record<string, Any>, Record<string, Any>> ?
     { [P in keyof Spec]: ReturnType<Spec[P]['validate']>; }
   : Spec extends Field<Any> ?
     ReturnType<Spec['validate']>
   :
     undefined;
 
-export type SpecHint<Spec extends SpecUnion<Any> | undefined> =
+export type SpecHint<Spec extends SpecUnion<Any, Any> | undefined> =
   Spec extends Segment<Any> ?
     Spec['spec']
-  : Spec extends ValidatorSpec<Record<string, Any>> ?
+  : Spec extends ValidatorSpec<Record<string, Any>, Record<string, Any>> ?
     { [P in keyof Spec]: Spec[P]['spec']; }
   : Spec extends Field<Any, Any> ?
     Spec['spec']
@@ -63,13 +63,18 @@ export const withErrorDecoration = <R> (key: any, call: () => R): R => {
 export const isField = <DeserializedType extends Any>(object: any): object is Field<DeserializedType> =>
   'validate' in object && 'serialize' in object && 'spec' in object
 
-const mapSpec = <DeserializedType extends Any, TSpec extends SpecUnion<DeserializedType>, R> (
-  validatorSpec: TSpec,
-  transform: (
+const mapSpec = <
+  DeserializedType extends Any,
+  SpecType extends { [P in keyof DeserializedType]: Any },
+  TSpec extends SpecUnion<DeserializedType, SpecType>,
+  R
+> (
+    validatorSpec: TSpec,
+    transform: (
     validator: Field<DeserializedType>,
     key: any
   ) => R
-): any => {
+  ): any => {
   if (validatorSpec === undefined) {
     return undefined
   } else if (isField<DeserializedType>(validatorSpec)) {
@@ -78,17 +83,17 @@ const mapSpec = <DeserializedType extends Any, TSpec extends SpecUnion<Deseriali
     return (validatorSpec as any).map(transform)
   } else {
     return Object.fromEntries(
-      Object.entries(validatorSpec as ValidatorSpec<{ [property: string]: Any }>).map(
+      Object.entries(validatorSpec as ValidatorSpec<{ [property: string]: Any }, { [property: string]: Any }>).map(
         ([key, validator]: [string, any]) => [key, withErrorDecoration(key, () => transform(validator, key))]
       )
     )
   }
 }
 
-export const getParams = <TSpec extends SpecUnion<Any>> (validatorSpec: TSpec): SpecHint<TSpec> =>
+export const getParams = <TSpec extends SpecUnion<Any, Any>> (validatorSpec: TSpec): SpecHint<TSpec> =>
   mapSpec(validatorSpec, validator => validator.spec)
 
-const ensureNoExtraFields = <DeserializedType extends Any, TSpec extends SpecUnion<DeserializedType>> (
+const ensureNoExtraFields = <DeserializedType extends Any, TSpec extends SpecUnion<DeserializedType, any>> (
   validatorSpec: TSpec,
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   value: any
@@ -97,7 +102,7 @@ const ensureNoExtraFields = <DeserializedType extends Any, TSpec extends SpecUni
     // OK
   } else {
     const extraKeys = new Set(Object.keys(value))
-    Object.keys(validatorSpec as ValidatorSpec<DeserializedType>).forEach((it) => extraKeys.delete(it))
+    Object.keys(validatorSpec as ValidatorSpec<DeserializedType, any>).forEach((it) => extraKeys.delete(it))
     if (extraKeys.size !== 0) {
       throw {
         extraKeys: Array.from(extraKeys)
@@ -108,7 +113,7 @@ const ensureNoExtraFields = <DeserializedType extends Any, TSpec extends SpecUni
 
 // The whole point of the library is to validate wildcard objects
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const validate = <TSpec extends SpecUnion<Any>> (
+export const validate = <TSpec extends SpecUnion<Any, Any>> (
   validatorSpec: TSpec,
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   value: any
@@ -120,7 +125,7 @@ export const validate = <TSpec extends SpecUnion<Any>> (
   return result
 }
 
-export const serialize = <TSpec extends SpecUnion<Any>> (
+export const serialize = <TSpec extends SpecUnion<Any, Any>> (
   validatorSpec: TSpec,
   value: TypeHint<TSpec>
 ): Json =>
