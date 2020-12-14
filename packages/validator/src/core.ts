@@ -13,7 +13,7 @@ export interface Field<DeserializedType, Spec=Json> {
   spec: Spec
 }
 
-export type ValidatorSpec<DeserializedType extends Any> = {
+export type ValidatorSpec<DeserializedType extends Any,> = {
   [P in keyof DeserializedType]: Field<DeserializedType[P]>;
 };
 
@@ -22,7 +22,7 @@ export type SpecUnion<DeserializedType extends Any> =
 
 export type TypeHint<Spec extends SpecUnion<Any> | undefined> =
   Spec extends Segment<Any> ?
-    ReturnType<Spec['match']>
+    ReturnType<Spec['validate']>
   : Spec extends ValidatorSpec<Record<string, Any>> ?
     { [P in keyof Spec]: ReturnType<Spec[P]['validate']>; }
   : Spec extends Field<Any> ?

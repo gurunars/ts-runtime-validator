@@ -66,7 +66,7 @@ export class Segment<
     return this.regex
   }
 
-  match(value: string): DeserializedType {
+  validate(value: string): DeserializedType {
     const matches = value.match(this.getRegex())?.groups
     if (!matches) {
       throw 'Didn\'t match'

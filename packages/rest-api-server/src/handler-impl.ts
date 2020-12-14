@@ -27,7 +27,7 @@ export const matchRoute = (
   const [path, queryString] = (request.url || '').split('?', 2)
   return {
     queryParams: validate(route.request.queryParams, qs.parse(queryString)),
-    pathParams: route.request.pathParams.match(path),
+    pathParams: route.request.pathParams.validate(path),
     method: assertEqual(
       route.request.method.toLowerCase(),
       request.method?.toLowerCase(),

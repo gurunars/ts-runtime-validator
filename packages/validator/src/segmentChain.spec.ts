@@ -17,7 +17,7 @@ describe('basics', () => {
       ._('/subtodos/')
       ._('suid', numberField())
 
-    const valid = segmentSpec.match('/john-sick/todos/11/subtodos/42')
+    const valid = segmentSpec.validate('/john-sick/todos/11/subtodos/42')
 
     expect(valid).toEqual({
       username: 'john-sick',
@@ -32,8 +32,8 @@ describe('basics', () => {
       ._('/')
       ._('username', stringField())
 
-    segmentSpec.match('/john-sick')
-    segmentSpec.match('/john-woo')
+    segmentSpec.validate('/john-sick')
+    segmentSpec.validate('/john-woo')
   })
 
 })

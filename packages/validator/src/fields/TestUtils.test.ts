@@ -38,7 +38,7 @@ export const testValidateSegmentChainOK = <T extends Any> (
     ._('field', field)
     ._('/suffix')
 
-  const valid = spec.match('/' + input + '/suffix')
+  const valid = spec.validate('/' + input + '/suffix')
   expect((valid as any).field).toEqual(expected)
 }
 
@@ -52,7 +52,7 @@ export const testValidateSegmentChainError = <T extends Any> (
 
   let error: any = null
   try {
-    spec.match('/' + input + '/suffix')
+    spec.validate('/' + input + '/suffix')
   } catch (err) {
     error = err
   }
