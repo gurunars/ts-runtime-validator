@@ -13,7 +13,7 @@ export interface Field<DeserializedType, Spec=Json> {
   spec: Spec
 }
 
-type AnyOf<DeserializedType extends Any> = { [P in keyof DeserializedType]: Any }
+export type AnyOf<DeserializedType extends Any> = { [P in keyof DeserializedType]: Any }
 
 export type ValidatorSpec<DeserializedType extends Any, SpecType extends AnyOf<DeserializedType>> = {
   [P in keyof DeserializedType]: Field<DeserializedType[P], SpecType[P]>;

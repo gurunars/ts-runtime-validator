@@ -1,4 +1,4 @@
-import { SpecUnion, TypeHint, ValidatorSpec } from '@validator/validator/core'
+import { AnyOf, SpecUnion, TypeHint, ValidatorSpec } from '@validator/validator/core'
 import { Segment } from '@validator/validator/segmentChain'
 import { StringMapping, Response, Request, Handler, HeaderMapping } from './handler'
 import { Any, Optional } from '@validator/validator/util-types'
@@ -12,9 +12,9 @@ export type RequestSpec<
 > = {
   readonly method: Method,
   readonly pathParams: Segment<PathParams>,
-  readonly data?: SpecUnion<Data>,
-  readonly queryParams?: ValidatorSpec<QueryParams>,
-  readonly headers?: ValidatorSpec<Headers>
+  readonly data?: SpecUnion<Data, AnyOf<Data>>,
+  readonly queryParams?: ValidatorSpec<QueryParams, AnyOf<QueryParams>>,
+  readonly headers?: ValidatorSpec<Headers, AnyOf<Headers>>
 }
 
 // TODO:
@@ -26,8 +26,8 @@ export type ResponseSpec<
   Data extends Optional<Any> = Optional<Any>,
 > = {
   readonly statusCode: StatusCode
-  readonly data?: SpecUnion<Data>,
-  readonly headers?: ValidatorSpec<Headers>
+  readonly data?: SpecUnion<Data, AnyOf<Data>>,
+  readonly headers?: ValidatorSpec<Headers, AnyOf<Headers>>
 }
 
 export type RequestExt<
