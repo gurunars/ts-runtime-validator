@@ -28,6 +28,8 @@ export default (projectPath: string): Task => async () => {
     newPackageJson[key] = parentConfig[key]
   })
 
+  newPackageJson.private = false
+
   const workspacePackages = new Set(getPackageNamesInBuildOrder())
 
   if (newPackageJson.dependencies) {
